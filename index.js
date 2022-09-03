@@ -1,5 +1,6 @@
 import express from 'express'
 import {engine} from 'express-handlebars'
+import { getFrase, getFrasePelicula, getFraseGraciosas } from './lib/frases.js'
 
 
 
@@ -11,13 +12,8 @@ app.engine('handlebars',engine())
 
 app.set('view engine', 'handlebars')
 app.set('views','./views')
+//app.disable('x-power')
 app.use(express.static('public'))
-
-const frases = [
-    "Si estás trabajando en algo que te importa de verdad, nadie tiene que empujarte: tu visión te empuja» —Steve Jobs",
-    "No tienes que ser grande para empezar. Pero tienes que empezar para poder ser grande» —Zig Ziglar",
-    "La felicidad no ocurre por casualidad, sino por elección» —Jim Rohn"
-]
 
 
 
@@ -25,12 +21,25 @@ app.get('/',(req, res)=>{
     res.render('home')
 })
 
-app.get('/about',(req, res)=>{
-    let fraseAleatoria = frases[Math.floor(Math.random()*frases.length)]
-    res.render('about',{frase:fraseAleatoria})
+
+app.get('/motivacionales',(req, res)=>{
+    res.render('about',{frase:getFrase()})
 })
 
+app.get('/graciosas',(req, res)=>{
+    res.render('about',{frase:getFraseGraciosas()})
+})
 
+app.get('/peliculas',(req, res)=>{
+    res.render('about',{frase:getFrasePelicula()})
+})
+
+app.get('/headers',(req,res)=>{
+    res.type('text/plain')
+    const headers = Object.entries(req.header)
+    .map(([key,value])=> `${key}:${value}`)
+    res.send(headers.join('\n'))
+})
 
 app.use((req,res)=>{
     res.status(404)
